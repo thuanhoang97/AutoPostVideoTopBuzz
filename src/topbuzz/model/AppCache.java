@@ -1,5 +1,6 @@
 package topbuzz.model;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
@@ -44,27 +45,39 @@ public class AppCache {
 	}
 	
 	public static void save() {	
-		JSONObject config = Config.toJSONObject();
-		JSONObject appCache = (JSONObject) config.get("cache");
-		appCache.replace("account", AppCache.account);
-		appCache.replace("password", AppCache.password);
-		appCache.replace("forderPath", AppCache.forderPath);
-		config.replace("cache", appCache);
-		
-		if(Config.toJSONFile()) {
-			System.out.println("Succesfull");
-		}else {
-			System.out.println("Error");
+		File appCacheFile = new File("AppCache.json");
+		if(!appCacheFile.exists()) {
+			try {
+				appCacheFile.createNewFile();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
+		JSONObject appCache = new JSONObject();
+		appCache.put("account", AppCache.account);
+		appCache.put("password", AppCache.password);
+		appCache.put("forderPath", AppCache.forderPath);
 		
+		try(FileWriter file = new FileWriter("AppCache.json")){
+			file.write(appCache.toJSONString());
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public static void load() {
-		JSONObject config = Config.toJSONObject();
-		JSONObject appCache = (JSONObject) config.get("cache");
-		AppCache.account = appCache.get("account").toString();
-		AppCache.password = appCache.get("password").toString();
-		AppCache.forderPath = appCache.get("forderPath").toString();
+		JSONParser parser = new JSONParser();
+		JSONObject appCache;
+		try {
+			appCache = (JSONObject) parser.parse(new FileReader("AppCache.json"));
+			AppCache.account = appCache.get("account").toString();
+			AppCache.password = appCache.get("password").toString();
+			AppCache.forderPath = appCache.get("forderPath").toString();
+		} catch (IOException | ParseException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 	}
 	
 }

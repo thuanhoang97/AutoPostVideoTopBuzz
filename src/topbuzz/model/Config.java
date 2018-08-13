@@ -1,5 +1,6 @@
 package topbuzz.model;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
@@ -38,4 +39,19 @@ public class Config {
 		return true;
 	}
 	
+	
+	public  static void createFile() {
+		try {
+			File configFile = new File("config.json");
+			if(!configFile.exists()) {
+				configFile.createNewFile();
+				JSONObject newConfig = new JSONObject();
+				
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+	}
 }
